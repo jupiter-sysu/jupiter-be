@@ -28,6 +28,6 @@ if ($mobile_message == $_SESSION['password_message']) {
 } else {
     $message_error = 'mobile message does not match';
     mysql_close($connect);
-    var_json(401, $_SESSION['phone_temp'], $message_error);
+    var_json(412, $_SESSION['phone_temp'], $message_error);
 }
 ?>

@@ -25,8 +25,8 @@ if ($_SESSION['verify_message'] == true) {
 	$_SESSION['verify_message'] = false;
     var_json(200, $_SESSION['phone_temp'], $message_error);
 } else {
-    $message_error = 'do not repeat changing your password';
+    $message_error = 'do not repeat your operations';
     mysql_close($connect);
-    var_json(401, $_SESSION['phone_temp'], $message_error);
+    var_json(415, $_SESSION['phone_temp'], $message_error);
 }
 ?>

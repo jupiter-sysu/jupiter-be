@@ -113,6 +113,6 @@ if ($row) {
     var_json(200, $phone_num, $error_info);
 } else {
     $error_info = 'mobile has not been registered';
-    var_json(401, $phone_num, $error_info);
+    var_json(414, $phone_num, $error_info);
 }
 ?>
