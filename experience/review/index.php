@@ -9,6 +9,7 @@ function var_json($code, $enmsg, $cnmsg, $data) {
     echo json_encode($out, JSON_HEX_TAG);
     exit(0);
 }
+
 $data_body = array();
 
 // fetch experience id & page_num
@@ -25,6 +26,7 @@ if (!$connect) {
 mysql_select_db("Jupiter_db", $connect);
 mysql_query('set names utf8');
 
+// fetch head info
 if ($page_num == 0) {
     $res = mysql_query("SELECT * FROM experience_info_temp WHERE experience_id=".$experience_id);
     $row = mysql_fetch_assoc($res);
@@ -32,124 +34,36 @@ if ($page_num == 0) {
         $data['cover_img'] = $row['cover_img'];
         $data['experience_title'] = $row['experience_title'];
         $data['experience_brief_description'] = $row['experience_brief_description'];
-        $data['experience_introduction'] = $row['experience_introduction'];
         $data['tags'] = [$row['experience_feature1'], $row['experience_feature2'], $row['experience_feature3']];
     } else {
-        var_json(404, "experience does not exist", "", null);
+        var_json(200, "Experience does not exist", "体验不存在！", null);
     }
 }
-$res1 = mysql_query("SELECT * FROM experience_review_info_temp WHERE experience_id=".$experience_id."LIMIT 10 OFFSET".$page_num*10);
-while($row=mysql_fetch_assoc($res)){
-    echo json_encode($row);
-}
-
-//echo(json_encode($data));
-//var_json(200, 'ok', '成功', $experience_title);
-//file_get_contents("php://input"); 
-//$data_json = array("cover_img" =>)
-//$response_json = array("code" => 200, "enmsg" => "ok", "cnmsg" => "成功");
-
-/*
-{
-    "code": 200,
-    "enmsg": "ok",
-    "cnmsg": "成功",
-    "data": {
-        "cover_img": "https://img-blog.csdn.net/20180531002326199?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MTIxMzAw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70",
-        "experience_title": "卡帕多奇亚·星球地貌",
-        "experience_brief_decription": "如果你想去月球，不妨先来这里看看",
-        "tags": [
-            "土耳其",
-            "奇异",
-            "壮观",
-            "浪漫"
-        ],
-        "reviews": [
-            {
-                "review_id": "000000",
-                "user_name": "onefour",
-                "user_profile_img": "https://img-blog.csdn.net/20180601122000725?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MTIxMzAw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70",
-                "review_date": "2018-01-25",
-                "star_rank": "4",
-                "review_tags": [
-                    "土耳其",
-                    "奇异",
-                    "浪漫"
-                ],
-                "review_text": "真心是非常神奇壮观的地方……感受自然吧！",
-                "review_imgs": [
-                    "https://img-blog.csdn.net/20180531002255820?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MTIxMzAw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70",
-                    "https://img-blog.csdn.net/20180531002316985?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MTIxMzAw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70",
-                    "https://img-blog.csdn.net/20180531002308878?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MTIxMzAw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70",
-                    "https://img-blog.csdn.net/20180531002418338?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MTIxMzAw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70",
-                    "https://img-blog.csdn.net/20180531002335718?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MTIxMzAw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70",
-                    "https://img-blog.csdn.net/20180531002410289?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MTIxMzAw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"
-                ],
-                "like_num": "23",
-                "comment_num": "1"
-            },
-            {
-                "review_id": "000001",
-                "user_name": "onefour",
-                "user_profile_img": "https://img-blog.csdn.net/20180601122000725?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MTIxMzAw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70",
-                "review_date": "2018-01-25",
-                "star_rank": "4",
-                "review_tags": [
-                    "土耳其",
-                    "奇异",
-                    "浪漫"
-                ],
-                "review_text": "真心是非常神奇壮观的地方……感受自然吧！",
-                "review_imgs": [
-                    "https://img-blog.csdn.net/20180531002410289?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MTIxMzAw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70"
-                    
-                ],
-                "like_num": "23",
-                "comment_num": "1"
-            },
-            {
-                "review_id": "000002",
-                "user_name": "onefour",
-                "user_profile_img": "https://img-blog.csdn.net/20180601122000725?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MTIxMzAw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70",
-                "review_date": "2018-01-25",
-                "star_rank": "4",
-                "review_tags": [
-                    "土耳其",
-                    "奇异",
-                    "浪漫"
-                ],
-                "review_text": "真心是非常神奇壮观的地方……感受自然吧！",
-                "review_imgs": [
-                    "url1",
-                    "url2"
-                ],
-                "like_num": "23",
-                "comment_num": "1"
-            },
-            {
-                "review_id": "000003",
-                "user_name": "onefour",
-                "user_profile_img": "https://img-blog.csdn.net/20180601122000725?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MTIxMzAw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70",
-                "review_date": "2018-01-25",
-                "star_rank": "4",
-                "review_tags": [
-                    "土耳其",
-                    "奇异",
-                    "浪漫"
-                ],
-                "review_text": "真心是非常神奇壮观的地方……感受自然吧！",
-                "review_imgs": [
-                    "url1",
-                    "url2"
-                ],
-                "like_num": "23",
-                "comment_num": "1"
-            }
-        ]
+// fetch reviews
+$res = mysql_query("SELECT * FROM experience_review_info_temp WHERE experience_id=".$experience_id." LIMIT 10 OFFSET ".$page_num*10);
+$count = 0;
+while ($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
+    // get review info
+    $data['reviews'][$count]['review_id'] = $row['experience_review_id'];
+    $data['reviews'][$count]['review_date'] = $row['create_at'];
+    $data['reviews'][$count]['star_rank'] = $row['star_rank'];
+    $data['reviews'][$count]['review_text'] = $row['experience_review_text'];
+    for ($count1 = 1; ($count1 <= 3) && ($row["feature" . $count1] != null); $count1++) {
+        $data['reviews'][$count]['review_tags'][$count1 - 1] = $row["feature" . $count1];
     }
+    for ($count1 = 1; ($count1 <= 9) && ($row["photo" . $count1] != null); $count1++) {
+        $data['reviews'][$count]['review_imgs'][$count1 - 1] = $row["photo" . $count1];
+    }
+    // get user info
+    $res1 = mysql_query("SELECT * FROM user_info_temp WHERE user_id = " . $row['user_id']);
+    $row1 = mysql_fetch_assoc($res1);
+    $data['reviews'][$count]['user_name'] = $row1['user_name'];
+    $data['reviews'][$count]['user_profile_img'] = $row1['profile_picture'];
+    $data['reviews'][$count]['like_num'] = $row['like_num'];
+    $data['reviews'][$count]['comment_num'] = $row['comment_num'];
+    $count++;
 }
-*/
-
-
+// response
+var_json(200, "ok", "成功", $data);
 ?> 
 

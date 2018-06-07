@@ -28,12 +28,15 @@ $res = mysql_query("SELECT * FROM review_like_info_temp WHERE user_id=" . $user_
 $row = $res ? mysql_fetch_assoc($res) : null;
 if ($row != null) {
     $res = mysql_query("DELETE FROM review_like_info_temp WHERE user_id=" . $user_id . " AND experience_review_id=" . $review_id);
+    echo 1;
 } else {
     $res = mysql_query("INSERT INTO review_like_info_temp (user_id, experience_review_id) VALUES ('" . $user_id . "', '" . $review_id . "')");
+    echo 2;
 }
 $res = mysql_query("SELECT COUNT(*) FROM review_like_info_temp WHERE experience_review_id=" . $review_id);
 $row = $res ? mysql_fetch_assoc($res) : null;
 $data['current_like_num'] = $row["COUNT(*)"];
-var_json("200", "ok", "成功", $data);
+$res1 =  mysql_query("UPDATE experience_review_info_temp SET like_num=". $row["COUNT(*)"] . " WHERE experience_review_id=" . $review_id);
+if ($res1) var_json("200", "ok", "成功", $data);
 ?> 
 

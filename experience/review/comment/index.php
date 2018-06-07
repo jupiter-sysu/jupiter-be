@@ -1,14 +1,14 @@
 <?php 
 // resonse function
-function var_json($code, $enmsg, $cnmsg) {
+function var_json($code, $enmsg, $cnmsg, $data) {
     $out['code'] = $code;
     $out['enmsg'] = $enmsg;
     $out['cnmsg'] = $cnmsg;
+    $out['data'] = $data;
     header('Content-Type: application/json; charset=UTF-8');
     echo json_encode($out, JSON_HEX_TAG);
     exit(0);
 }
-$data_body = array();
 
 // fetch post data
 $mysqltime = date ("Y-m-d H:i:s", time());
@@ -30,11 +30,14 @@ mysql_query('set names utf8');
 
 $res = mysql_query("INSERT INTO review_comment_info_temp (review_comment_id, experience_review_text, experience_review_id, 
     user_id, create_at) VALUES (NULL, '" . $comment_text . "', '" . $review_id . "', '". $user_id . "', '" . $mysqltime . "')");
-
-if ($res == true) {
-    var_json("200", "ok", "评论成功");
+$res1 = mysql_query("SELECT COUNT(*) FROM review_comment_info_temp WHERE experience_review_id=" . $review_id);
+$row = $res1 ? mysql_fetch_assoc($res1) : null;
+$res1 =  mysql_query("UPDATE experience_review_info_temp SET comment_num=". $row["COUNT(*)"] . " WHERE experience_review_id=" . $review_id);
+$data['current_comment_num'] = $row["COUNT(*)"];
+if ($res && $res1) {
+    var_json("200", "ok", "评论成功", $data);
 } else {
-    var_json("200", "failed", "评论失败");
+    var_json("200", "failed", "评论失败", null);
 }
 
 ?> 
