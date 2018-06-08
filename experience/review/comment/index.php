@@ -28,7 +28,7 @@ mysql_select_db("Jupiter_db", $connect);
 mysql_query('set names utf8');
 
 
-$res = mysql_query("INSERT INTO review_comment_info_temp (review_comment_id, experience_review_text, experience_review_id, 
+$res = mysql_query("INSERT INTO review_comment_info_temp (review_comment_id, comment_text, experience_review_id, 
     user_id, create_at) VALUES (NULL, '" . $comment_text . "', '" . $review_id . "', '". $user_id . "', '" . $mysqltime . "')");
 $res1 = mysql_query("SELECT COUNT(*) FROM review_comment_info_temp WHERE experience_review_id=" . $review_id);
 $row = $res1 ? mysql_fetch_assoc($res1) : null;
