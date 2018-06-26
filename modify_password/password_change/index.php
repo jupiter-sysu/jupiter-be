@@ -1,19 +1,12 @@
-﻿<?php
+<?php
 session_start();
-function var_json($code, $data, $enmsg, $cnmsg) {
-    $out['code'] = $code ?: 0;
-    $out['data'] = $data ?: '';
-    $out['enmsg'] = $enmsg ?: '';
-    $out['cnmsg'] = $cnmsg ?: '';
+function var_json($error_code, $phone_num, $error_info) {
+	$out['error_code'] = $error_code ?: 0;
+    $out['phone_num'] = $phone_num ?: '';
+    $out['error_info'] = $error_info ?: '';
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode($out, JSON_HEX_TAG);
     exit(0);
-}
-function generateHash($password) {
-  if (defined("CRYPT_BLOWFISH") && CRYPT_BLOWFISH) {
-    $salt = '$2y$11$' . substr(md5(uniqid(rand(), true)), 0, 22);
-    return crypt($password, $salt);
-  }
 }
 function obj2Arr ($obj) {
     $_arr = is_object($obj) ? get_object_vars($obj) : $obj; 
@@ -78,9 +71,6 @@ function checkErr($result,$error) {
 $post_body = file_get_contents('php://input');
 $result_json = json_decode($post_body);
 $phone_num = empty($result_json->phone_num) ? '' : $result_json->phone_num;
-$password = empty($result_json->password) ? '' : $result_json->password;
-$password = generateHash($password);
-$_SESSION['password'] = $password;
 header("Content-Type:text/html;charset=utf-8");
 $apikey = "63d34dfb1e717fccf116411b5064adef";
 $random4 = rand(1000,9999);
@@ -113,19 +103,16 @@ $result = mysql_query("SELECT * FROM user_info_temp
     WHERE phone_num=" . "'" . $phone_num . "'");
 $row = mysql_fetch_array($result);
 
-if (!$row) {
+if ($row) {
 	$data=array('text'=>$text,'apikey'=>$apikey,'mobile'=>$phone_num);
 	$json_data = send($ch,$data);
 	$array = json_decode($json_data,true);
-	$_SESSION['phone_message'] = $random4;	
-	$cnmsg = '成功，手机号未注册';
-    $enmsg = 'ok';
-    $data2['phone_num'] = $phone_num;
-    var_json(200, $data2, $enmsg, $cnmsg);
+	$_SESSION['password_message'] = $random4;
+    $_SESSION['phone_temp'] = $phone_num;	
+	$error_info = '';
+    var_json(200, $phone_num, $error_info);
 } else {
-    $cnmsg = '手机号已经被注册';
-    $enmsg = 'mobile_has_been_used';
-    $data2['phone_num'] = $phone_num;
-    var_json(500, $data2, $enmsg, $cnmsg);
+    $error_info = 'mobile has not been registered';
+    var_json(414, $phone_num, $error_info);
 }
 ?>

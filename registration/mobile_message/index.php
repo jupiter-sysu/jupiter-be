@@ -1,10 +1,9 @@
-﻿<?php
+<?php
 session_start();
-function var_json($code, $data, $enmsg, $cnmsg) {
-    $out['code'] = $code ?: 0;
-    $out['data'] = $data ?: '';
-    $out['enmsg'] = $enmsg ?: '';
-    $out['cnmsg'] = $cnmsg ?: '';
+function var_json($error_code, $phone_num, $error_info) {
+	$out['error_code'] = $error_code ?: 0;
+    $out['phone_num'] = $phone_num ?: '';
+    $out['error_info'] = $error_info ?: '';
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode($out, JSON_HEX_TAG);
     exit(0);
@@ -72,6 +71,8 @@ function checkErr($result,$error) {
 $post_body = file_get_contents('php://input');
 $result_json = json_decode($post_body);
 $phone_num = empty($result_json->phone_num) ? '' : $result_json->phone_num;
+$password = empty($result_json->password) ? '' : $result_json->password;
+$_SESSION['password'] = $password;
 header("Content-Type:text/html;charset=utf-8");
 $apikey = "63d34dfb1e717fccf116411b5064adef";
 $random4 = rand(1000,9999);
@@ -104,20 +105,15 @@ $result = mysql_query("SELECT * FROM user_info_temp
     WHERE phone_num=" . "'" . $phone_num . "'");
 $row = mysql_fetch_array($result);
 
-if ($row) {
+if (!$row) {
 	$data=array('text'=>$text,'apikey'=>$apikey,'mobile'=>$phone_num);
 	$json_data = send($ch,$data);
 	$array = json_decode($json_data,true);
-	$_SESSION['password_message'] = $random4;
-    $_SESSION['phone_temp'] = $phone_num;	
-	$cnmsg = '成功。';
-    $enmsg = 'ok';
-    $data2['phone_num'] = $phone_num;
-    var_json(200, $data2, $enmsg, $cnmsg);
+	$_SESSION['phone_message'] = $random4;	
+	$error_info = '';
+    var_json(200, $phone_num, $error_info);
 } else {
-    $cnmsg = '手机号未被注册，无法修改密码。';
-    $enmsg = 'unregistered';
-    $data2['phone_num'] = $phone_num;
-    var_json(500, $data2, $enmsg, $cnmsg);
+    $error_info = 'mobile has been registered';
+    var_json(413, $phone_num, $error_info);
 }
 ?>
