@@ -1,5 +1,8 @@
-﻿<?php 
-header('Content-Type: text/html; charset=gb2312'); 
+﻿<?php
+header('Content-Type: text/html; charset=gb2312');
+header('Access-Control-Allow-Origin: *');
+header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 session_start();
 function var_json($code, $enmsg, $cnmsg, $data) {
     $out['code'] = $code;
