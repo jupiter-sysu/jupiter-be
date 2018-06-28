@@ -1,4 +1,5 @@
 <?php
+require('/alidata/www/phpwind/Jupiter/lib/password.php');
 session_start();
 function var_json($code, $enmsg, $cnmsg, $data) {
     $out['code'] = $code;
@@ -8,12 +9,6 @@ function var_json($code, $enmsg, $cnmsg, $data) {
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode($out, JSON_HEX_TAG);
     exit(0);
-}
-function generateHash($password) {
-    if (defined("CRYPT_BLOWFISH") && CRYPT_BLOWFISH) {
-        $salt = '$2y$11$' . substr(md5(uniqid(rand(), true)), 0, 22);
-        return crypt($password, $salt);
-    }
 }
 $post_body = file_get_contents('php://input');
 $result_json = json_decode($post_body);
@@ -30,7 +25,7 @@ $row = mysql_fetch_array($result);
 if (!$row) {
     var_json(500, 'unregistered_phone', '该手机号未注册', null);
 } else {
-    if ($row['crypted_password'] == generateHash($password)) {
+    if (password_verify($password, $row['crypted_password'])) {
         $data['user_id'] = $row['user_id'];
         $data['user_name'] = $row['user_name'];
         $data['authority'] = $row['authority'];
