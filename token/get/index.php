@@ -3,8 +3,8 @@ require_once '/alidata/www/phpwind/Jupiter/php-sdk-master/php-sdk-master/autoloa
 
 use \Qiniu\Auth;
 
-$accessKey = 'mVNzLSKB_XpOpfVy9Xn3tvpCgmu9iiwSIbr8EujL';
-$secretKey = '4IX1fpCwivK0EN8mCA3lReTqKdREg2R0bXVmIjtY';
+$accessKey = 'XXXX';
+$secretKey = 'XXXX';
 $bucket = 'jupiter';
 
 $auth = new Auth($accessKey, $secretKey);
