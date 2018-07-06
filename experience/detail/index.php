@@ -37,26 +37,28 @@ if (!empty($row)) {
     $data['tags'] = [$row['experience_feature1'], $row['experience_feature2'], $row['experience_feature3']];
     $res1 = mysql_query("SELECT * FROM user_info_temp WHERE user_id=".$user_id);
     $row1 = mysql_fetch_assoc($res1);
+    $city_id = $row['city_id'];
     if (!empty($row1)) {
         $data['experience_author'] = $row1['user_name'];
         $data['author_profile_img'] = $row1['profile_picture'];
     }
-    $res1 = mysql_query("SELECT * FROM city_experience_info_temp WHERE experience_id=" . $experience_id);
-    $row1 = mysql_fetch_assoc($res1);
-    $city_id = $row1['city_id'];
-    $res2 = mysql_query("SELECT * FROM city_experience_info_temp WHERE city_id=" . $city_id . " AND experience_id != " . $experience_id . " order by rand() limit 4");
+
+    $res2 = mysql_query("SELECT * FROM experience_info_temp WHERE city_id=" . $city_id . " AND experience_id != " . $experience_id . " order by rand() limit 4");
     $count = 0;
-    while($row2 = mysql_fetch_assoc($res2)) {
+    while($row2 = mysql_fetch_array($res2)) {
         $exp_ids = $row2['experience_id'];
         $res3 = mysql_query("SELECT * FROM experience_info_temp WHERE experience_id=".$exp_ids);
         $row3 = mysql_fetch_assoc($res3);
         $data['nearby_experience'][$count]['experience_id'] = $exp_ids;
         $data['nearby_experience'][$count]['experience_title'] = $row3['experience_title'];
         $data['nearby_experience'][$count]['card_img'] = $row3['card_img'];
-        $data['nearby_experience'][$count]['experience_brief_description'] = $row3['feature1'];
+        $data['nearby_experience'][$count]['experience_brief_description'] = $row3['experience_brief_description'];
+        $data['nearby_experience'][$count]['experience_feature'] = $row3['experience_feature1'];
+        $count++;
     }
 }
-echo(json_encode($data));
+var_json(200, "ok", "成功", $data)
+
 //var_json(200, 'ok', '成功', $experience_title);
 //file_get_contents("php://input"); 
 //$data_json = array("cover_img" =>)
